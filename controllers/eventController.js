@@ -3,9 +3,7 @@ import Event from "../models/Event.js";
 // GET /events: Fetch all events
 export const getEvents = async (req, res) => {
     try {
-        const events = await Event.findAll({
-            attributes: { exclude: ["password"] } // Exclude password field
-        })
+        const events = await Event.findAll()
         res.status(200).json(events); // Return all users
     } catch (error) {
         console.error(error);
@@ -30,16 +28,16 @@ export const createEvent = async (req, res) => {
 
     } catch (error) {
         // If it's a Sequelize validation error, respond with the details
-        if (err.name === "SequelizeValidationError") {
+        if (error.name === "SequelizeValidationError") {
             return res.status(400).json({
                 message: "Validation error",
-                errors: err.errors.map((error) => error.message),
+                errors: error.errors.map((error) => error.message),
             });
         }
 
         return res.status(500).json({
             message: "Error creating Event",
-            error: err.message,
+            error: error.message,
         });
     }
 };
@@ -49,9 +47,7 @@ export const getEventById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const event = await Event.findByPk(id, {
-            attributes: { exclude: ["password"] } // Exclude password field
-        })
+        const event = await Event.findByPk(id)
 
         if (!event) {
             return res.status(404).json({ message: "Event not found." })

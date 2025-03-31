@@ -11,6 +11,7 @@ const User = sequelize.define(
     },
     community_id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "communities",
         key: "id",
