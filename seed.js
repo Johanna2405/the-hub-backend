@@ -104,7 +104,7 @@ const seed = async () => {
       {
         title: "Travel Checklist",
         category: "Travel",
-        privacy: "Public",
+        privacy: "Community",
         user_id: users[1].id,
       },
     ]);
@@ -112,20 +112,17 @@ const seed = async () => {
     // List Items
     await ListItem.bulkCreate([
       {
-        name: "Apples",
-        title: "Red Apples (2kg)",
+        name: "Red Apples (2kg)",
         list_id: lists[0].id,
         is_completed: false,
       },
       {
-        name: "Bread",
-        title: "Whole Wheat Bread",
+        name: "Whole Wheat Bread",
         list_id: lists[0].id,
         is_completed: false,
       },
       {
-        name: "Passport",
-        title: "Valid Passport for Travel",
+        name: "Valid Passport for Travel",
         list_id: lists[1].id,
         is_completed: false,
       },

@@ -6,6 +6,7 @@ import { connectDB } from "./db/index.js";
 
 //importing routes
 import messageRoutes from "./routes/messageRoutes.js";
+import listRoutes from "./routes/listRoutes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -18,6 +19,7 @@ app.get("/api/", (req, res) => {
 
 //routes
 app.use("/api/messages", messageRoutes);
+app.use("/api/lists", listRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
