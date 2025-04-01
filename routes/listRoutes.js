@@ -5,6 +5,13 @@ import {
   createList,
   updateList,
 } from "../controllers/listController.js";
+import {
+  getListItems,
+  getListItemById,
+  createListItem,
+  updateListItem,
+  deleteListItem,
+} from "../controllers/listItemController.js";
 
 const listRoutes = express.Router();
 
@@ -26,7 +33,7 @@ const listRoutes = express.Router();
  *                 properties:
  *                   id:
  *                     type: integer
- *                     example: 401
+ *                     example: 1
  *                   title:
  *                     type: string
  *                     example: "Groceries"
@@ -89,7 +96,7 @@ listRoutes.get("/", getLists);
  *               properties:
  *                 id:
  *                   type: integer
- *                   example: 401
+ *                   example: 1
  *                 title:
  *                   type: string
  *                   example: "Groceries"
@@ -260,5 +267,258 @@ listRoutes.post("/", createList);
  *         description: Failed to update list
  */
 listRoutes.put("/:id", updateList);
-
+/**
+ * @swagger
+ * /lists/{list_id}/items:
+ *   get:
+ *     summary: Get all items for a specific list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: list_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list to retrieve items for
+ *     responses:
+ *       200:
+ *         description: List of items for the given list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 501
+ *                   list_id:
+ *                     type: integer
+ *                     example: 401
+ *                   name:
+ *                     type: string
+ *                     example: "Milk"
+ *                   is_completed:
+ *                     type: boolean
+ *                     example: false
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-03-23T08:15:00Z"
+ *       500:
+ *         description: Failed to fetch list items
+ */
+listRoutes.get("/:list_id/items", getListItems);
+/**
+ * @swagger
+ * /lists/{listId}/items/{itemId}:
+ *   get:
+ *     summary: Get a specific item from a list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list item
+ *     responses:
+ *       200:
+ *         description: The requested list item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 501
+ *                 list_id:
+ *                   type: integer
+ *                   example: 401
+ *                 name:
+ *                   type: string
+ *                   example: "Milk"
+ *                 is_completed:
+ *                   type: boolean
+ *                   example: false
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-03-23T08:15:00Z"
+ *       404:
+ *         description: List item not found
+ *       500:
+ *         description: Failed to fetch list item
+ */
+listRoutes.get("/:listId/items/:itemId", getListItemById);
+/**
+ * @swagger
+ * /lists/{listId}/items:
+ *   post:
+ *     summary: Create a new list item under a specific list
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list to add the item to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Exercise"
+ *               is_completed:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       201:
+ *         description: List item created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 503
+ *                 list_id:
+ *                   type: integer
+ *                   example: 401
+ *                 name:
+ *                   type: string
+ *                   example: "Bread"
+ *                 is_completed:
+ *                   type: boolean
+ *                   example: false
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-03-27T10:50:00Z"
+ *       400:
+ *         description: Missing required fields or validation error
+ *       500:
+ *         description: Error creating list item
+ */
+listRoutes.post("/:listId/items", createListItem);
+/**
+ * @swagger
+ * /lists/{listId}/items/{itemId}:
+ *   put:
+ *     summary: Update a specific list item
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list item to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Exercise"
+ *               is_completed:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: List item updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 503
+ *                 list_id:
+ *                   type: integer
+ *                   example: 401
+ *                 name:
+ *                   type: string
+ *                   example: "Whole Wheat Bread"
+ *                 is_completed:
+ *                   type: boolean
+ *                   example: true
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-03-27T10:50:00Z"
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2025-03-27T10:55:00Z"
+ *       400:
+ *         description: No valid fields provided
+ *       404:
+ *         description: List item not found
+ *       500:
+ *         description: Failed to update list item
+ */
+listRoutes.put("/:listId/items/:itemId", updateListItem);
+/**
+ * @swagger
+ * /lists/{listId}/items/{itemId}:
+ *   delete:
+ *     summary: Delete a specific list item
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the list item to delete
+ *     responses:
+ *       200:
+ *         description: List item deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Item deleted."
+ *       404:
+ *         description: List item not found
+ *       500:
+ *         description: Failed to delete list item
+ */
+listRoutes.delete("/:listId/items/:itemId", deleteListItem);
 export default listRoutes;
