@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import { connectDB } from "./db/index.js";
@@ -9,9 +10,9 @@ import messageRoutes from "./routes/messageRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 
 dotenv.config();
-const PORT = process.env.PORT || 8080;
 const app = express();
-
+const PORT = process.env.PORT || 8080;
+app.use(cors());
 app.use(express.json());
 app.get("/api/", (req, res) => {
   res.send("API is running...");
