@@ -1,5 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger.js";
+import { connectDB } from "./db/index.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -7,16 +10,16 @@ const app = express();
 
 app.use(express.json());
 app.get("/", (req, res) => {
-    res.send("API is running...");
+  res.send("API is running...");
 });
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const startServer = async () => {
-    // await connectDB();
-    app.listen(PORT, () =>
-        console.log(
-            `server running on port ${PORT} ->  http://localhost:${PORT}/`
-        )
-    );
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`server running on port ${PORT} ->  http://localhost:${PORT}/`);
+    console.log(`Swagger docs at http://localhost:${PORT}/api-docs`);
+  });
 };
 
 startServer();
