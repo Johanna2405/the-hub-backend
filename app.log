@@ -34,3 +34,14 @@
 {"level":"\u001b[31merror\u001b[39m","message":"Event with id 20 not found","timestamp":"2025-04-02T19:27:18.700Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:28:40.397Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:29:38.489Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:41.756Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:43.804Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:46.953Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:47.108Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:47.287Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:47.482Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A POST request is made to add a new Event","timestamp":"2025-04-02T19:44:47.669Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:29.025Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:34.527Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:38.533Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:44.621Z"}

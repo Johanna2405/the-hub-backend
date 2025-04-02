@@ -1,8 +1,12 @@
-class errorResponse extends Error {
+// utils/ErrorResponse.js
+class ErrorResponse extends Error {
     constructor(message, statusCode) {
         super(message);
         this.statusCode = statusCode;
+
+        // Capture the stack trace
+        Error.captureStackTrace(this, this.constructor);
     }
 }
 
-export default errorResponse;
+export default ErrorResponse;

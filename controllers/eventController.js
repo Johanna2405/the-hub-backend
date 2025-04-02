@@ -1,7 +1,7 @@
 import Event from "../models/Event.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import logger from "../utils/logger.js";
-import errorResponse from "../utils/ErrorResponse.js";
+import ErrorResponse from "../utils/ErrorResponse.js";
 
 // GET /events: Fetch all events
 export const getEvents = asyncHandler(async (req, res) => {
@@ -70,16 +70,16 @@ export const updateEvent = asyncHandler(async (req, res) => {
 
 // DELETE /events/:id: Delete a specific event by ID
 export const deleteEvent = asyncHandler(async (req, res) => {
-    // logger.error("A DELETE request is made to DELETE a specific Event")
+    logger.error("A DELETE request is made to DELETE a specific Event")
     const { id } = req.params;
 
     if (!id) {
-        throw new errorResponse("Event ID is required in the URL", 400);
+        throw new ErrorResponse("Event ID is required in the URL", 400);
     }
     const event = await Event.findByPk(id);
-    
+
     if (!event) {
-        throw new errorResponse(`Event with id ${id} not found`, 404);
+        throw new ErrorResponse(`Event with id ${id} not found`, 404);
     }
     await event.destroy(); // Delete the event from the database
     res.status(200).json({ message: "Event deleted successfully." });
