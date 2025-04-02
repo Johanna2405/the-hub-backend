@@ -12,9 +12,12 @@ export const createPost = asyncHandler(async (req, res, next) => {
   res.status(201).json(post);
 });
 
-// Get all posts
+// Get all posts (optional user filter)
 export const getAllPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.findAll();
+  const { userId } = req.query;
+
+  const query = userId ? { where: { userId } } : {};
+  const posts = await Post.findAll(query);
   res.json(posts);
 });
 
