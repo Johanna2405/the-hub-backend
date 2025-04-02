@@ -21,10 +21,6 @@ const ListItem = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    title: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
     is_completed: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
