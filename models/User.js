@@ -11,7 +11,7 @@ const User = sequelize.define(
     },
     community_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true, // Allow null for community_id temporarily to avoid issues, needs to be changed to false later
       references: {
         model: "communities",
         key: "id",
