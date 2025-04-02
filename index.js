@@ -8,6 +8,8 @@ import { connectDB } from "./db/index.js";
 //importing routes
 import messageRoutes from "./routes/messageRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import communityRoutes from "./routes/communityRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -21,6 +23,8 @@ app.get("/api/", (req, res) => {
 //routes
 app.use("/api/messages", messageRoutes);
 app.use("/api/lists", listRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/communities", communityRoutes);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
