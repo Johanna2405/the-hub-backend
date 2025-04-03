@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { login } from "../controllers/userController.js";
+import auth from "../middleware/auth.js";
 
 const registerRoutes = Router();
 
@@ -54,5 +55,33 @@ const registerRoutes = Router();
  *         description: Server error
  */
 registerRoutes.post("/", login);
+
+// Protected route to get the current user
+/**
+ * @swagger
+ * /me:
+ *   get:
+ *     summary: Get the current logged-in user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ */
+registerRoutes.get("/me", auth, getCurrentUser);
 
 export default registerRoutes;
