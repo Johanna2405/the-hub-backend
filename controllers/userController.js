@@ -1,5 +1,7 @@
 import models from "../models/index.js";
+import jwt from "jsonwebtoken";
 const { User, Community } = models;
+import bcrypt from "bcryptjs";
 
 // GET /users: Fetch all users
 export const getUsers = async (req, res) => {
@@ -95,12 +97,12 @@ export const getUserById = async (req, res) => {
 // PUT /users/:id: Update user details for a specific user
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { username, email, profilePicture, community_id } = req.body;
+  const { username, email, profilePicture, community_id, password } = req.body;
 
-  if (!username && !email && !profilePicture && !community_id) {
+  if (!username && !email && !profilePicture && !community_id && !password) {
     return res.status(400).json({
       message:
-        "At least one field (username, email, profilePicture, community_id) must be provided for update.",
+        "At least one field (username, email, profilePicture, community_id, password) must be provided for update.",
     });
   }
 
@@ -116,6 +118,11 @@ export const updateUser = async (req, res) => {
     if (email) user.email = email;
     if (profilePicture) user.profile_picture = profilePicture;
     if (community_id !== undefined) user.community_id = community_id;
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
 
     await user.save();
 
@@ -144,10 +151,47 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    await user.destroy(); // Delete the user from the database
+    await user.destroy();
     res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to delete user." });
+  }
+};
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.scope("withPassword").findOne({ where: { email } });
+
+    // console.log(user);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    // console.log("Password input:", password);
+    // console.log("Password input:", user.password);
+    // console.log(isMatch);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+
+    console.log("Types →", typeof password, typeof user.password);
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.username,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };

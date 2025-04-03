@@ -11,6 +11,7 @@ import listRoutes from "./routes/listRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import communityRoutes from "./routes/communityRoutes.js";
+import registerRoutes from "./routes/registerRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ app.get("/api/", (req, res) => {
 });
 
 //routes
+app.use("/api/login", registerRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/lists", listRoutes);
 app.use("/api/posts", postRoutes);

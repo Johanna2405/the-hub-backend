@@ -13,6 +13,28 @@ const options = {
         url: "http://localhost:8080/api",
       },
     ],
+    tags: [
+      {
+        name: "Auth",
+        description: "Authentication routes",
+      },
+      {
+        name: "Users",
+        description: "User management routes",
+      },
+      {
+        name: "Communities",
+        description: "Community-related routes",
+      },
+      {
+        name: "Lists",
+        description: "List related routes",
+      },
+      {
+        name: "Messages",
+        description: "Messages routes",
+      },
+    ],
   },
   apis: ["./routes/*.js"],
 };
