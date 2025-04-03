@@ -25,26 +25,29 @@ const seed = async () => {
     ]);
 
     // Users
-    const users = await User.bulkCreate([
-      {
-        username: "Alice",
-        password: "pass123",
-        email: "alice@example.com",
-        community_id: communities[0].id,
-      },
-      {
-        username: "Bob",
-        password: "pass123",
-        email: "bob@example.com",
-        community_id: communities[0].id,
-      },
-      {
-        username: "Carol",
-        password: "pass123",
-        email: "carol@example.com",
-        community_id: communities[1].id,
-      },
-    ]);
+    const users = await User.bulkCreate(
+      [
+        {
+          username: "Alice",
+          password: "pass1234",
+          email: "alice@example.com",
+          community_id: communities[0].id,
+        },
+        {
+          username: "Bob",
+          password: "pass1234",
+          email: "bob@example.com",
+          community_id: communities[0].id,
+        },
+        {
+          username: "Carol",
+          password: "pass1234",
+          email: "carol@example.com",
+          community_id: communities[1].id,
+        },
+      ],
+      { individualHooks: true }
+    );
 
     // Posts
     await Post.bulkCreate([
