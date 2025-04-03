@@ -195,3 +195,18 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+// GET /login/me – Get user from token (via middleware `auth`)
+export const getCurrentUser = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  res.status(200).json({
+    id: req.user.id,
+    username: req.user.username,
+    email: req.user.email,
+    profilePicture: req.user.profile_picture,
+    communityId: req.user.community_id,
+  });
+};
