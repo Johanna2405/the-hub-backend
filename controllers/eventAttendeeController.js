@@ -28,16 +28,16 @@ export const createEventAttendee = async (req, res) => {
 
     } catch (error) {
         // If it's a Sequelize validation error, respond with the details
-        if (err.name === "SequelizeValidationError") {
+        if (error.name === "SequelizeValidationError") {
             return res.status(400).json({
                 message: "Validation error",
-                errors: err.errors.map((error) => error.message),
+                errors: error.errors.map((e) => e.message),
             });
         }
 
         return res.status(500).json({
             message: "Error creating Event Attendee",
-            error: err.message,
+            error: error.message,
         });
     }
 };
