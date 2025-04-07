@@ -12,7 +12,30 @@ export const getLists = async (req, res) => {
         },
         {
           model: ListItem,
-          as: "list_items",
+        },
+      ],
+    });
+
+    res.status(200).json(lists);
+  } catch (error) {
+    console.error("Error fetching lists:", error);
+    res.status(500).json({ message: "Failed to fetch lists." });
+  }
+};
+
+// GET /api/lists?user_id=123
+export const getListsPerUserId = async (req, res) => {
+  const user_id = req.params.user_id;
+  try {
+    const lists = await List.findAll({
+      where: { user_id },
+      include: [
+        {
+          model: User,
+          attributes: ["id"],
+        },
+        {
+          model: ListItem,
         },
       ],
     });
@@ -56,7 +79,6 @@ export const getListById = async (req, res) => {
       include: [
         {
           model: ListItem,
-          as: "list_items",
         },
       ],
     });
