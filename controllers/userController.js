@@ -2,6 +2,7 @@ import models from "../models/index.js";
 import jwt from "jsonwebtoken";
 const { User, Community } = models;
 import bcrypt from "bcryptjs";
+import userSchema from "../schemas/userSchema.js";
 
 // GET /users: Fetch all users
 export const getUsers = async (req, res) => {
@@ -25,7 +26,20 @@ export const getUsers = async (req, res) => {
 
 // POST /users: Create a new user
 export const createUser = async (req, res) => {
-  const { username, email, password, profilePicture, community_id } = req.body;
+  req.body.profile_picture = req.body.profilePicture ?? null;
+  console.log("Incoming Signup Body:", req.body);
+
+  // Validate with Joi first
+  const { error } = userSchema.POST.validate(req.body);
+  if (error) {
+    console.error("Joi validation error:", error.details);
+    return res.status(400).json({
+      message: "Validation error",
+      errors: error.details.map((detail) => detail.message),
+    });
+  }
+
+  const { username, email, password, profile_picture, community_id } = req.body;
   console.log("Received data:", req.body);
   if (!username || !email || !password) {
     return res.status(400).json({
@@ -38,7 +52,7 @@ export const createUser = async (req, res) => {
       username,
       email,
       password,
-      profile_picture: profilePicture ?? null,
+      profile_picture: profile_picture ?? null,
       community_id: community_id ?? null,
     });
 
