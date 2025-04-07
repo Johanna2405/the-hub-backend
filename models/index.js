@@ -46,6 +46,9 @@ MessageReaction.belongsTo(User, { foreignKey: "user_id" });
 Message.hasMany(MessageReaction, { foreignKey: "message_id" });
 MessageReaction.belongsTo(Message, { foreignKey: "message_id" });
 
+User.hasMany(Post, { foreignKey: "userId" });
+Post.belongsTo(User, { foreignKey: "userId", as: "author" });
+
 const models = {
   User,
   Post,

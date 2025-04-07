@@ -1,7 +1,9 @@
-import Post from "../models/Post.js";
+import models from "../models/index.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import postSchema from "../schemas/postSchema.js";
+
+const { Post, User } = models;
 
 // Create a new post
 export const createPost = asyncHandler(async (req, res, next) => {
@@ -16,14 +18,33 @@ export const createPost = asyncHandler(async (req, res, next) => {
 export const getAllPosts = asyncHandler(async (req, res) => {
   const { userId } = req.query;
 
-  const query = userId ? { where: { userId } } : {};
+  const query = {
+    where: userId ? { userId } : undefined,
+    include: [
+      {
+        model: User,
+        as: "author",
+        attributes: ["id", "username", "profile_picture"],
+      },
+    ],
+  };
+
   const posts = await Post.findAll(query);
   res.json(posts);
 });
 
 // Get post by ID
 export const getPostById = asyncHandler(async (req, res, next) => {
-  const post = await Post.findByPk(req.params.id);
+  const post = await Post.findByPk(req.params.id, {
+    include: [
+      {
+        model: User,
+        as: "author",
+        attributes: ["id", "username", "profile_picture"],
+      },
+    ],
+  });
+
   if (!post) return next(new ErrorResponse("Post not found", 404));
 
   res.json(post);
