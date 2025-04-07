@@ -4,6 +4,7 @@ import {
   getListById,
   createList,
   updateList,
+  getListsPerUserId,
 } from "../controllers/listController.js";
 import {
   getListItems,
@@ -73,6 +74,73 @@ const listRoutes = express.Router();
  *         description: Failed to fetch lists
  */
 listRoutes.get("/", getLists);
+
+/**
+ * @swagger
+ * /lists/{user_id}:
+ *   get:
+ *     summary: Get all lists for a specific user, including user and list item data
+ *     tags: [Lists]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user
+ *     responses:
+ *       200:
+ *         description: A list of all lists belonging to the specified user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   title:
+ *                     type: string
+ *                     example: "Groceries"
+ *                   category:
+ *                     type: string
+ *                     example: "Shopping"
+ *                   userId:
+ *                     type: integer
+ *                     example: 1
+ *                   privacy:
+ *                     type: string
+ *                     example: "Private"
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                   list_items:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                           example: 1
+ *                         list_id:
+ *                           type: integer
+ *                           example: 1
+ *                         name:
+ *                           type: string
+ *                           example: "Red Apples (2kg)"
+ *                         is_completed:
+ *                           type: boolean
+ *                           example: false
+ *       500:
+ *         description: Failed to fetch lists
+ */
+listRoutes.get("/:user_id", getListsPerUserId);
+
 /**
  * @swagger
  * /lists/{id}:
