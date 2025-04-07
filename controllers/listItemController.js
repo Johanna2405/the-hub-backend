@@ -106,7 +106,10 @@ export const updateListItem = async (req, res) => {
     if (name) listItem.name = name;
     if (is_completed !== undefined) listItem.is_completed = is_completed;
 
-    await listItem.save();
+    await listItem.update({
+      ...(name !== undefined && { name }),
+      ...(is_completed !== undefined && { is_completed }),
+    });
 
     res.status(200).json(listItem);
   } catch (error) {
