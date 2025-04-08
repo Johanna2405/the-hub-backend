@@ -19,6 +19,13 @@ export default function setupSocket(io) {
       io.emit("receive_message", fullMessage);
     });
 
+    socket.on("user_typing", (data) => {
+      socket.broadcast.emit("display_typing", {
+        userId: data.user_id,
+        username: data.username,
+      });
+    });
+
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
     });
