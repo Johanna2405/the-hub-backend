@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const userSchema = {
   POST: Joi.object({
-    community_id: Joi.number().integer().required(),
+    community_id: Joi.number().integer().optional(),
     username: Joi.string().max(64).required(),
     email: Joi.string().email().max(255).required(),
     password: Joi.string().min(8).max(100).required(),
