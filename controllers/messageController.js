@@ -23,11 +23,17 @@ export const getMessageById = async (req, res) => {
   }
 };
 
-export const addMessage = async (req, res) => {
+export const addMessage = async (req, res, next) => {
   const { user_id, content } = req.body;
 
   if (!user_id || !content) {
     return res.status(400).json({ error: "user_id and content are required" });
+  }
+
+  if (req.body.community_id) {
+    return next(
+      new ErrorResponse("Use community routes for community messages", 400)
+    );
   }
 
   try {

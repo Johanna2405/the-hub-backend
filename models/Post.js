@@ -32,6 +32,15 @@ const Post = sequelize.define(
       allowNull: true,
       field: "image_url",
     },
+    community_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "communities",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
   },
   {
     tableName: "posts",

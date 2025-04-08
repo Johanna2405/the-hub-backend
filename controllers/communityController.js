@@ -1,87 +1,149 @@
-import Community from "../models/Community.js";
+import models from "../models/index.js";
+import communitySchema from "../schemas/communitySchema.js";
+const { Community, UserCommunity } = models;
 
 // GET /communities: Fetch all communities
 export const getCommunities = async (req, res) => {
-    try {
-        const communities = await Community.findAll();
-        res.status(200).json(communities);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to fetch communities.' });
-    }
+  try {
+    const communities = await Community.findAll();
+    res.status(200).json(communities);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch communities." });
+  }
 };
 
 // POST /communities: Create a new community
-export const createCommunity = async (req, res) => {
-    const { name } = req.body;
+export const createCommunity = async (req, res, next) => {
+  const { error, value } = communitySchema.POST.validate(req.body);
+  if (error) return next(new ErrorResponse(error.details[0].message, 400));
 
-    if (!name) {
-        return res.status(400).json({ message: 'Community name is required.' });
+  const { name } = value;
+
+  try {
+    const community = await Community.create({ name });
+
+    // Add creator as admin
+    await UserCommunity.create({
+      user_id: req.user.id,
+      community_id: community.id,
+      role: "admin",
+    });
+
+    res.status(201).json(community);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error creating community." });
+  }
+};
+
+// GET /communities/my: Fetch communities the user is part of
+export const getMyCommunities = async (req, res) => {
+  try {
+    const user = await models.User.findByPk(req.user.id, {
+      include: {
+        model: models.Community,
+        through: { attributes: ["role"] },
+      },
+    });
+
+    const communities = user.Communities.map((c) => ({
+      id: c.id,
+      name: c.name,
+      role: c.UserCommunity.role,
+    }));
+
+    res.status(200).json(communities);
+  } catch (err) {
+    console.error("Error loading user communities:", err);
+    res.status(500).json({ message: "Failed to load communities." });
+  }
+};
+
+// POST /communities/:id/join: Join a community
+export const joinCommunity = async (req, res) => {
+  const communityId = req.params.id;
+
+  try {
+    const existing = await UserCommunity.findOne({
+      where: {
+        user_id: req.user.id,
+        community_id: communityId,
+      },
+    });
+
+    if (existing) {
+      return res.status(400).json({ message: "Already a member." });
     }
 
-    try {
-        const community = await Community.create({ name });
-        res.status(201).json(community);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creating community.' });
-    }
+    await UserCommunity.create({
+      user_id: req.user.id,
+      community_id: communityId,
+      role: "member",
+    });
+
+    res.status(200).json({ message: "Joined successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to join community." });
+  }
 };
 
 // GET /communities/:id: Fetch a specific community by ID
 export const getCommunityById = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const community = await Community.findByPk(id);
-        if (!community) {
-            return res.status(404).json({ message: 'Community not found.' });
-        }
-        res.status(200).json(community);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to fetch community.' });
+  try {
+    const community = await Community.findByPk(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found." });
     }
+    res.status(200).json(community);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch community." });
+  }
 };
 
 // PUT /communities/:id: Update a specific community by ID
-export const updateCommunity = async (req, res) => {
-    const { id } = req.params;
-    const { name } = req.body;
+export const updateCommunity = async (req, res, next) => {
+  const { error, value } = communitySchema.PUT.validate(req.body);
+  if (error) return next(new ErrorResponse(error.details[0].message, 400));
 
-    if (!name) {
-        return res.status(400).json({ message: 'Community name is required for update.' });
+  const { id } = req.params;
+
+  try {
+    const community = await Community.findByPk(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found." });
     }
 
-    try {
-        const community = await Community.findByPk(id);
-        if (!community) {
-            return res.status(404).json({ message: 'Community not found.' });
-        }
-
-        community.name = name;
-        await community.save();
-        res.status(200).json(community);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to update community.' });
+    if (value.name) {
+      community.name = value.name;
+      await community.save();
     }
+
+    res.status(200).json(community);
+  } catch (error) {
+    console.error("Error updating community:", error);
+    res.status(500).json({ message: "Failed to update community." });
+  }
 };
 
 // DELETE /communities/:id: Delete a specific community by ID
 export const deleteCommunity = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const community = await Community.findByPk(id);
-        if (!community) {
-            return res.status(404).json({ message: 'Community not found.' });
-        }
-
-        await community.destroy();
-        res.status(200).json({ message: 'Community deleted successfully.' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to delete community.' });
+  try {
+    const community = await Community.findByPk(id);
+    if (!community) {
+      return res.status(404).json({ message: "Community not found." });
     }
+
+    await community.destroy();
+    res.status(200).json({ message: "Community deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete community." });
+  }
 };

@@ -2,9 +2,24 @@ import { Router } from "express";
 import {
   getCommunities,
   createCommunity,
+  updateCommunity,
+  getMyCommunities,
+  deleteCommunity,
+  getCommunityById,
+  joinCommunity,
 } from "../controllers/communityController.js";
 
-const communityRoutes = Router();
+import auth from "../middleware/auth.js";
+import { requireAdmin } from "../middleware/checkCommunityRole.js";
+
+const router = Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Communities
+ *   description: Community management and membership
+ */
 
 /**
  * @swagger
@@ -15,27 +30,26 @@ const communityRoutes = Router();
  *     responses:
  *       200:
  *         description: A list of communities
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   name:
- *                     type: string
- *                     example: Tech Enthusiasts
- *                   created_at:
- *                     type: string
- *                     format: date-time
- *                     example: 2025-03-15T12:00:00Z
  *       500:
  *         description: Server error
  */
-communityRoutes.get("/communities", getCommunities);
+router.get("/", getCommunities);
+
+/**
+ * @swagger
+ * /communities/my:
+ *   get:
+ *     summary: Get communities the user belongs to
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of user’s communities
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/my", auth, getMyCommunities);
 
 /**
  * @swagger
@@ -43,6 +57,8 @@ communityRoutes.get("/communities", getCommunities);
  *   post:
  *     summary: Create a new community
  *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,30 +70,127 @@ communityRoutes.get("/communities", getCommunities);
  *             properties:
  *               name:
  *                 type: string
- *                 example: New Community
  *     responses:
  *       201:
  *         description: Community created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                   example: 3
- *                 name:
- *                   type: string
- *                   example: New Community
- *                 created_at:
- *                   type: string
- *                   format: date-time
- *                   example: 2025-03-27T11:00:00Z
  *       400:
- *         description: Missing name field
+ *         description: Missing name
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */
-communityRoutes.post("/", createCommunity);
+router.post("/", auth, createCommunity);
 
-export default communityRoutes;
+/**
+ * @swagger
+ * /communities/{id}/join:
+ *   post:
+ *     summary: Join an existing community
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Joined successfully
+ *       400:
+ *         description: Already a member
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+router.post("/:id/join", auth, joinCommunity);
+
+/**
+ * @swagger
+ * /communities/{id}:
+ *   get:
+ *     summary: Get a specific community by ID
+ *     tags: [Communities]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Community found
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id", auth, getCommunityById);
+
+/**
+ * @swagger
+ * /communities/{id}:
+ *   put:
+ *     summary: Update a community (admin only)
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Community updated
+ *       403:
+ *         description: Admin rights required
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/:id", auth, requireAdmin, updateCommunity);
+
+/**
+ * @swagger
+ * /communities/{id}:
+ *   delete:
+ *     summary: Delete a community (admin only)
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Community deleted
+ *       403:
+ *         description: Admin rights required
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/:id", auth, requireAdmin, deleteCommunity);
+
+export default router;

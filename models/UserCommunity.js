@@ -1,14 +1,9 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/index.js";
 
-const Message = sequelize.define(
-  "Message",
+const UserCommunity = sequelize.define(
+  "UserCommunity",
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -16,26 +11,28 @@ const Message = sequelize.define(
         model: "users",
         key: "id",
       },
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      onDelete: "CASCADE",
     },
     community_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: "communities",
         key: "id",
       },
+      onDelete: "CASCADE",
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "member", // or "admin"
     },
   },
   {
-    tableName: "messages",
+    tableName: "user_communities",
     timestamps: true,
     underscored: true,
-    updatedAt: false,
   }
 );
 
-export default Message;
+export default UserCommunity;

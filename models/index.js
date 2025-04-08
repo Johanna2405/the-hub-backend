@@ -10,13 +10,11 @@ import ListItem from "./ListItem.js";
 import EventAttendee from "./EventAttendee.js";
 import MessageReaction from "./MessageReaction.js";
 import Comment from "./Comment.js";
+import UserCommunity from "./UserCommunity.js";
 
 // Associations
 User.hasMany(Post, { foreignKey: "user_id" });
 Post.belongsTo(User, { foreignKey: "user_id" });
-
-User.belongsTo(Community, { foreignKey: "community_id" });
-Community.hasMany(User, { foreignKey: "community_id" });
 
 User.hasMany(Message, { foreignKey: "user_id" });
 Message.belongsTo(User, { foreignKey: "user_id" });
@@ -59,6 +57,18 @@ Comment.belongsTo(Post, { foreignKey: "post_id" });
 User.hasMany(Comment, { foreignKey: "user_id" });
 Comment.belongsTo(User, { foreignKey: "user_id", as: "author" });
 
+// User and Community association
+User.belongsToMany(Community, {
+  through: UserCommunity,
+  foreignKey: "user_id",
+  otherKey: "community_id",
+});
+Community.belongsToMany(User, {
+  through: UserCommunity,
+  foreignKey: "community_id",
+  otherKey: "user_id",
+});
+
 const models = {
   User,
   Post,
@@ -70,6 +80,7 @@ const models = {
   EventAttendee,
   MessageReaction,
   Comment,
+  UserCommunity,
 };
 
 Object.entries(models).forEach(([name, model]) => {

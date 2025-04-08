@@ -45,3 +45,13 @@
 {"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:34.527Z"}
 {"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:38.533Z"}
 {"level":"\u001b[31merror\u001b[39m","message":"A DELETE request is made to DELETE a specific Event","timestamp":"2025-04-02T19:45:44.621Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:38:18.268Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:38:28.223Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:38:28.224Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:40:40.031Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:44:22.910Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:44:22.913Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:48:04.998Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:48:04.999Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T09:48:39.658Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"A GET request is made to get all the Events","timestamp":"2025-04-08T12:51:51.178Z"}

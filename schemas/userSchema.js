@@ -13,7 +13,7 @@ const userSchema = {
     community_id: Joi.number().integer().optional(),
     username: Joi.string().max(64).optional(),
     email: Joi.string().email().max(255).optional(),
-    password: Joi.string().min(8).max(100).required(),
+    password: Joi.string().min(8).max(100).optional(),
     profile_picture: Joi.string().uri().max(255).allow(null, ""),
   }),
 };
