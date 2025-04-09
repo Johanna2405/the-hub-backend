@@ -180,3 +180,50 @@ export const updateCommunitySettings = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ message: "Settings updated", settings: community.settings });
 });
+
+export const getCommunityPinBoard = asyncHandler(async (req, res, next) => {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ message: "Invalid community ID" });
+  }
+
+  const community = await models.Community.findByPk(id);
+
+  if (!community) {
+    return res.status(404).json({ message: "Community not found." });
+  }
+
+  res.status(200).json({
+    pin_board: community.pin_board || [],
+  });
+});
+
+export const updateCommunityPinBoard = asyncHandler(async (req, res, next) => {
+  const community = await Community.findByPk(req.params.id);
+  if (!community) {
+    return next(new ErrorResponse("Community not found", 404));
+  }
+
+  const requestedPins = req.body.pin_board;
+
+  if (!Array.isArray(requestedPins)) {
+    return next(new ErrorResponse("pin_board must be an array", 400));
+  }
+
+  const settings = community.settings || {};
+  const allowedPins = Object.keys(settings).filter((key) => settings[key]);
+
+  const invalidPins = requestedPins.filter((app) => !allowedPins.includes(app));
+  if (invalidPins.length > 0) {
+    return res.status(400).json({
+      message: "Some apps are not enabled in community settings.",
+      invalid: invalidPins,
+    });
+  }
+
+  community.pin_board = requestedPins;
+  await community.save();
+
+  res.json({ message: "Pinboard updated", pin_board: community.pin_board });
+});

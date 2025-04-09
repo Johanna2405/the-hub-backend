@@ -9,6 +9,8 @@ import {
   joinCommunity,
   getCommunitySettings,
   updateCommunitySettings,
+  getCommunityPinBoard,
+  updateCommunityPinBoard,
 } from "../controllers/communityController.js";
 
 import auth from "../middleware/auth.js";
@@ -299,5 +301,86 @@ router.get("/:id/settings", auth, getCommunitySettings);
  *         description: Server error
  */
 router.put("/:id/settings", auth, requireAdmin, updateCommunitySettings);
+
+/**
+ * @swagger
+ * /communities/{id}/pinboard:
+ *   get:
+ *     summary: Get pinned apps on the community pin board
+ *     tags: [Communities]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the community
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of pinned apps
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 pin_board:
+ *                   type: array
+ *                   example: ["calendar", "posts", "lists"]
+ *       404:
+ *         description: Community not found
+ */
+router.get("/:id/pinboard", auth, getCommunityPinBoard);
+
+/**
+ * @swagger
+ * /communities/{id}/pinboard:
+ *   put:
+ *     summary: Update pinned apps on the community pin board (admin only)
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the community
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - pin_board
+ *             properties:
+ *               pin_board:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["calendar", "lists", "messages"]
+ *     responses:
+ *       200:
+ *         description: Pinboard updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Pinboard updated
+ *                 pin_board:
+ *                   type: array
+ *                   example: ["calendar", "lists"]
+ *       400:
+ *         description: Validation error or invalid apps
+ *       403:
+ *         description: Admin rights required
+ *       404:
+ *         description: Community not found
+ */
+router.put("/:id/pinboard", auth, requireAdmin, updateCommunityPinBoard);
 
 export default router;

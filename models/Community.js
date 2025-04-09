@@ -24,6 +24,11 @@ const Community = sequelize.define(
         messages: true,
       },
     },
+    pin_board: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: [],
+    },
   },
   {
     tableName: "communities",
