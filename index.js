@@ -1,11 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
 import { connectDB } from "./db/index.js";
+import setupSocket from "./controllers/socket.js";
 
-//importing routes
+// Routes
 import messageRoutes from "./routes/messageRoutes.js";
 import listRoutes from "./routes/listRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
@@ -23,15 +26,20 @@ import communityListItemRoutes from "./routes/communityListItemRoutes.js";
 import communityMessageRoutes from "./routes/communityMessageRoutes.js";
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Base route
 app.get("/api/", (req, res) => {
   res.send("API is running...");
 });
 
-//routes
+// Routes
 app.use("/api/login", registerRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/lists", listRoutes);
@@ -56,12 +64,27 @@ app.use(
 );
 app.use("/api/communities/:communityId/messages", communityMessageRoutes);
 
+// Swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// HTTP server from Express
+const server = http.createServer(app);
+
+// Attach Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+setupSocket(io);
+
+// Start everything
 const startServer = async () => {
   await connectDB();
-  app.listen(PORT, () => {
-    console.log(`server running on port ${PORT} ->  http://localhost:${PORT}/`);
+
+  server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Swagger docs at http://localhost:${PORT}/api-docs`);
   });
 };
