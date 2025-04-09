@@ -1,5 +1,6 @@
 import models from "../models/index.js";
 import communitySchema from "../schemas/communitySchema.js";
+import asyncHandler from "../utils/asyncHandler.js";
 const { Community, UserCommunity } = models;
 
 // GET /communities: Fetch all communities
@@ -147,3 +148,35 @@ export const deleteCommunity = async (req, res) => {
     res.status(500).json({ message: "Failed to delete community." });
   }
 };
+
+// GET /communities/:id/settings
+export const getCommunitySettings = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const community = await Community.findByPk(id);
+
+  if (!community) {
+    return next(new ErrorResponse("Community not found", 404));
+  }
+
+  res.status(200).json(community.settings);
+});
+
+// PUT /communities/:id/settings
+export const updateCommunitySettings = asyncHandler(async (req, res, next) => {
+  const { error } = communitySchema.SETTINGS_UPDATE.validate(req.body);
+  if (error) return next(new ErrorResponse(error.details[0].message, 400));
+
+  const { id } = req.params;
+  const community = await Community.findByPk(id);
+
+  if (!community) {
+    return next(new ErrorResponse("Community not found", 404));
+  }
+
+  community.settings = req.body.settings;
+  await community.save();
+
+  res
+    .status(200)
+    .json({ message: "Settings updated", settings: community.settings });
+});

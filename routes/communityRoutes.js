@@ -7,6 +7,8 @@ import {
   deleteCommunity,
   getCommunityById,
   joinCommunity,
+  getCommunitySettings,
+  updateCommunitySettings,
 } from "../controllers/communityController.js";
 
 import auth from "../middleware/auth.js";
@@ -192,5 +194,110 @@ router.put("/:id", auth, requireAdmin, updateCommunity);
  *         description: Server error
  */
 router.delete("/:id", auth, requireAdmin, deleteCommunity);
+
+/**
+ * @swagger
+ * /communities/{id}/settings:
+ *   get:
+ *     summary: Get settings of a specific community
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the community
+ *     responses:
+ *       200:
+ *         description: Community settings retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 calendar:
+ *                   type: boolean
+ *                   example: true
+ *                 lists:
+ *                   type: boolean
+ *                   example: true
+ *                 posts:
+ *                   type: boolean
+ *                   example: true
+ *                 events:
+ *                   type: boolean
+ *                   example: true
+ *                 messages:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.get("/:id/settings", auth, getCommunitySettings);
+
+/**
+ * @swagger
+ * /communities/{id}/settings:
+ *   put:
+ *     summary: Update settings of a specific community (admin only)
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the community
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - settings
+ *             properties:
+ *               settings:
+ *                 type: object
+ *                 properties:
+ *                   calendar:
+ *                     type: boolean
+ *                     example: true
+ *                   lists:
+ *                     type: boolean
+ *                     example: false
+ *                   posts:
+ *                     type: boolean
+ *                     example: true
+ *                   events:
+ *                     type: boolean
+ *                     example: true
+ *                   messages:
+ *                     type: boolean
+ *                     example: false
+ *     responses:
+ *       200:
+ *         description: Settings updated successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin rights required
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/:id/settings", auth, requireAdmin, updateCommunitySettings);
 
 export default router;

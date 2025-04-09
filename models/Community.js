@@ -13,6 +13,17 @@ const Community = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
+    settings: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {
+        calendar: true,
+        lists: true,
+        posts: true,
+        events: true,
+        messages: true,
+      },
+    },
   },
   {
     tableName: "communities",
