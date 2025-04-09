@@ -10,6 +10,12 @@ export const createPost = asyncHandler(async (req, res, next) => {
   const { error } = postSchema.POST.validate(req.body);
   if (error) return next(new ErrorResponse(error.details[0].message, 400));
 
+  if (req.body.communityId) {
+    return next(
+      new ErrorResponse("Cannot assign communityId to a private post.", 400)
+    );
+  }
+
   const post = await Post.create(req.body);
   res.status(201).json(post);
 });

@@ -1,11 +1,12 @@
 import express from "express";
 import {
-    getEventAttendees,
-    createEventAttendee,
-    getEventAttendeeById,
-    updateEventAttendee,
-    deleteEventAttendee,
+  getEventAttendees,
+  createEventAttendee,
+  getEventAttendeeById,
+  updateEventAttendee,
+  deleteEventAttendee,
 } from "../controllers/eventAttendeeController.js";
+import auth from "../middleware/auth.js";
 
 const eventAttendeeRoutes = express.Router();
 
@@ -41,7 +42,7 @@ const eventAttendeeRoutes = express.Router();
  *       500:
  *         description: Failed to fetch all event attendees
  */
-eventAttendeeRoutes.get("/", getEventAttendees);
+eventAttendeeRoutes.get("/", auth, getEventAttendees);
 
 /**
  * @swagger
@@ -82,7 +83,7 @@ eventAttendeeRoutes.get("/", getEventAttendees);
  *       500:
  *         description: Failed to fetch Event Attendee
  */
-eventAttendeeRoutes.get("/:id", getEventAttendeeById);
+eventAttendeeRoutes.get("/:id", auth, getEventAttendeeById);
 
 /**
  * @swagger
@@ -132,7 +133,7 @@ eventAttendeeRoutes.get("/:id", getEventAttendeeById);
  *       500:
  *         description: Error creating Event Attendee
  */
-eventAttendeeRoutes.post("/", createEventAttendee);
+eventAttendeeRoutes.post("/", auth, createEventAttendee);
 
 /**
  * @swagger
@@ -188,7 +189,7 @@ eventAttendeeRoutes.post("/", createEventAttendee);
  *       500:
  *         description: Failed to update event attendee
  */
-eventAttendeeRoutes.put("/:id", updateEventAttendee);
+eventAttendeeRoutes.put("/:id", auth, updateEventAttendee);
 
 /**
  * @swagger
@@ -219,6 +220,6 @@ eventAttendeeRoutes.put("/:id", updateEventAttendee);
  *       500:
  *         description: Failed to delete event attendee
  */
-eventAttendeeRoutes.delete("/:id", deleteEventAttendee);
+eventAttendeeRoutes.delete("/:id", auth, deleteEventAttendee);
 
 export default eventAttendeeRoutes;

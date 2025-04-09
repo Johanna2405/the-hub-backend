@@ -18,6 +18,12 @@ import userRoutes from "./routes/userRoutes.js";
 import communityRoutes from "./routes/communityRoutes.js";
 import registerRoutes from "./routes/registerRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
+import communityEventRoutes from "./routes/communityEventRoutes.js";
+import communityEventAttendeeRoutes from "./routes/communityEventAttendeeRoutes.js";
+import communityPostRoutes from "./routes/communityPostRoutes.js";
+import communityListRoutes from "./routes/communityListRoutes.js";
+import communityListItemRoutes from "./routes/communityListItemRoutes.js";
+import communityMessageRoutes from "./routes/communityMessageRoutes.js";
 
 dotenv.config();
 
@@ -41,8 +47,22 @@ app.use("/api/events", eventRoutes);
 app.use("/api/eventattendees", eventAttendeeRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/communities", communityRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/communities", communityRoutes);
+
+// Community specific routes
+app.use("/api/communities/:communityId/events", communityEventRoutes);
+app.use(
+  "/api/communities/:communityId/events/:eventId/attendees",
+  communityEventAttendeeRoutes
+);
+app.use("/api/communities/:communityId/posts", communityPostRoutes);
+app.use("/api/communities/:communityId/lists", communityListRoutes);
+app.use(
+  "/api/communities/:communityId/lists/:listId/items",
+  communityListItemRoutes
+);
+app.use("/api/communities/:communityId/messages", communityMessageRoutes);
 
 // Swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
