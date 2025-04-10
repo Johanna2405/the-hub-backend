@@ -9,6 +9,7 @@ export const getCommunityMessages = asyncHandler(async (req, res) => {
 
   const messages = await Message.findAll({
     where: { community_id: communityId },
+    order: [["createdAt", "ASC"]],
     include: {
       model: User,
       attributes: ["id", "username", "profile_picture"],
