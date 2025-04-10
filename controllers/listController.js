@@ -49,7 +49,7 @@ export const getListsPerUserId = async (req, res) => {
 
 // POST /lists: Create a new list
 export const createList = async (req, res) => {
-  const { user_id, title, category, privacy } = req.body;
+  const { user_id, title, category, privacy, community_id } = req.body;
 
   if (!user_id || !title || !category || !privacy) {
     return res.status(400).json({ message: "All fields are required." });
@@ -61,6 +61,7 @@ export const createList = async (req, res) => {
       title,
       category,
       privacy,
+      community_id,
     });
 
     res.status(201).json(list);
