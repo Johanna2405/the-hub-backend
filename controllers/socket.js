@@ -10,7 +10,7 @@ export default function setupSocket(io) {
 
     socket.on("user_connected", (user) => {
       onlineUsers[user.id] = socket.id;
-      console.log("Online users:", Object.keys(onlineUsers));
+      // console.log("Online users:", Object.keys(onlineUsers)); //comment logs
 
       io.emit("update_online_users", Object.keys(onlineUsers));
     });
@@ -18,6 +18,7 @@ export default function setupSocket(io) {
     socket.on("send_message", async (data) => {
       const message = await Message.create({
         user_id: data.user_id,
+        community_id: data.community_id,
         content: data.content,
       });
 
@@ -32,12 +33,13 @@ export default function setupSocket(io) {
     socket.on("user_typing", (data) => {
       socket.broadcast.emit("display_typing", {
         userId: data.user_id,
+        communityId: data.community_id,
         username: data.username,
       });
     });
 
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.id}`);
+      // console.log(`User disconnected: ${socket.id}`);  //comment logs
 
       const disconnectedUserId = Object.keys(onlineUsers).find(
         (id) => onlineUsers[id] === socket.id
