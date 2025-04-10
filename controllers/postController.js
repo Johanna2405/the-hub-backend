@@ -3,7 +3,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import postSchema from "../schemas/postSchema.js";
 
-const { Post, User } = models;
+const { Post, User, Community } = models;
 
 // Create a new post
 export const createPost = asyncHandler(async (req, res, next) => {
@@ -24,7 +24,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
 export const getAllPosts = asyncHandler(async (req, res) => {
   const { userId } = req.query;
 
-  const query = {
+  const posts = await Post.findAll({
     where: userId ? { userId } : undefined,
     include: [
       {
@@ -32,10 +32,13 @@ export const getAllPosts = asyncHandler(async (req, res) => {
         as: "author",
         attributes: ["id", "username", "profile_picture"],
       },
+      {
+        model: Community,
+        attributes: ["id", "name"],
+      },
     ],
-  };
+  });
 
-  const posts = await Post.findAll(query);
   res.json(posts);
 });
 
@@ -47,6 +50,10 @@ export const getPostById = asyncHandler(async (req, res, next) => {
         model: User,
         as: "author",
         attributes: ["id", "username", "profile_picture"],
+      },
+      {
+        model: Community,
+        attributes: ["id", "name"],
       },
     ],
   });

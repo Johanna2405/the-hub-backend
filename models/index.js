@@ -69,6 +69,10 @@ Community.belongsToMany(User, {
   otherKey: "user_id",
 });
 
+// Post and Community association
+Community.hasMany(Post, { foreignKey: "community_id" });
+Post.belongsTo(Community, { foreignKey: "community_id" });
+
 const models = {
   User,
   Post,
