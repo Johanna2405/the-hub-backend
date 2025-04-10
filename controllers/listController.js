@@ -28,7 +28,7 @@ export const getListsPerUserId = async (req, res) => {
   const user_id = req.params.user_id;
   try {
     const lists = await List.findAll({
-      where: { user_id },
+      where: { user_id, privacy: "Private" },
       include: [
         {
           model: User,
