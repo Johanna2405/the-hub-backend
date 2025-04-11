@@ -227,3 +227,47 @@ export const updateCommunityPinBoard = asyncHandler(async (req, res, next) => {
 
   res.json({ message: "Pinboard updated", pin_board: community.pin_board });
 });
+
+// DELETE /communities/:id/leave
+export const leaveCommunity = async (req, res) => {
+  const communityId = req.params.id;
+
+  try {
+    const userCommunity = await UserCommunity.findOne({
+      where: {
+        user_id: req.user.id,
+        community_id: communityId,
+      },
+    });
+
+    if (!userCommunity) {
+      return res
+        .status(404)
+        .json({ message: "Not a member of this community." });
+    }
+
+    // Prevent admin from leaving if they are the last admin
+    if (userCommunity.role === "admin") {
+      const otherAdmins = await UserCommunity.findAll({
+        where: {
+          community_id: communityId,
+          role: "admin",
+          user_id: { [models.Sequelize.Op.ne]: req.user.id },
+        },
+      });
+
+      if (otherAdmins.length === 0) {
+        return res
+          .status(400)
+          .json({ message: "Cannot leave as the last admin." });
+      }
+    }
+
+    await userCommunity.destroy();
+
+    res.status(200).json({ message: "Left community successfully." });
+  } catch (err) {
+    console.error("Error leaving community:", err);
+    res.status(500).json({ message: "Failed to leave community." });
+  }
+};
