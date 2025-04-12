@@ -212,13 +212,17 @@ export const updateCommunityPinBoard = asyncHandler(async (req, res, next) => {
   }
 
   const settings = community.settings || {};
-  const allowedPins = Object.keys(settings).filter((key) => settings[key]);
+  const allowedApps = Object.keys(settings).filter((key) => settings[key]);
 
-  const invalidPins = requestedPins.filter((app) => !allowedPins.includes(app));
-  if (invalidPins.length > 0) {
+  // Check each item (must be object with "type")
+  const invalidItems = requestedPins.filter(
+    (item) => !item.type || !allowedApps.includes(item.type)
+  );
+
+  if (invalidItems.length > 0) {
     return res.status(400).json({
       message: "Some apps are not enabled in community settings.",
-      invalid: invalidPins,
+      invalid: invalidItems,
     });
   }
 
