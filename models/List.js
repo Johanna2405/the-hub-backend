@@ -29,6 +29,15 @@ const List = sequelize.define(
       type: DataTypes.STRING(50),
       allowNull: false,
     },
+    community_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "communities",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
   },
   {
     tableName: "lists",

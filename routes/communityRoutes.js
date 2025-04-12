@@ -11,6 +11,7 @@ import {
   updateCommunitySettings,
   getCommunityPinBoard,
   updateCommunityPinBoard,
+  leaveCommunity,
 } from "../controllers/communityController.js";
 
 import auth from "../middleware/auth.js";
@@ -382,5 +383,34 @@ router.get("/:id/pinboard", auth, getCommunityPinBoard);
  *         description: Community not found
  */
 router.put("/:id/pinboard", auth, requireAdmin, updateCommunityPinBoard);
+
+/**
+ * @swagger
+ * /communities/{id}/leave:
+ *   post:
+ *     summary: Leave a community
+ *     tags: [Communities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the community
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully left the community
+ *       400:
+ *         description: Not a member of this community
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Community not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/:id/leave", auth, leaveCommunity);
 
 export default router;
