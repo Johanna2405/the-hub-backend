@@ -1,6 +1,12 @@
 import express from "express";
-import { getEvents, createEvent, getEventById, updateEvent, deleteEvent } from "../controllers/eventController.js";
-
+import {
+  getEvents,
+  createEvent,
+  getEventById,
+  updateEvent,
+  deleteEvent,
+} from "../controllers/eventController.js";
+import auth from "../middleware/auth.js";
 const eventRoutes = express.Router();
 
 /**
@@ -9,6 +15,8 @@ const eventRoutes = express.Router();
  *   get:
  *     summary: Get all events
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of all events
@@ -60,7 +68,7 @@ const eventRoutes = express.Router();
  *       500:
  *         description: Failed to fetch events
  */
-eventRoutes.get("/", getEvents);
+eventRoutes.get("/", auth, getEvents);
 
 /**
  * @swagger
@@ -68,6 +76,8 @@ eventRoutes.get("/", getEvents);
  *   get:
  *     summary: Get a specific event by ID
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -126,7 +136,7 @@ eventRoutes.get("/", getEvents);
  *       500:
  *         description: Failed to fetch event
  */
-eventRoutes.get("/:id", getEventById);
+eventRoutes.get("/:id", auth, getEventById);
 
 /**
  * @swagger
@@ -134,6 +144,8 @@ eventRoutes.get("/:id", getEventById);
  *   post:
  *     summary: Create a new event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -226,7 +238,7 @@ eventRoutes.get("/:id", getEventById);
  *       500:
  *         description: Error creating event
  */
-eventRoutes.post("/", createEvent);
+eventRoutes.post("/", auth, createEvent);
 
 /**
  * @swagger
@@ -234,6 +246,8 @@ eventRoutes.post("/", createEvent);
  *   put:
  *     summary: Update an existing event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -328,7 +342,7 @@ eventRoutes.post("/", createEvent);
  *       500:
  *         description: Failed to update event
  */
-eventRoutes.put("/:id", updateEvent);
+eventRoutes.put("/:id", auth, updateEvent);
 
 /**
  * @swagger
@@ -336,6 +350,8 @@ eventRoutes.put("/:id", updateEvent);
  *   delete:
  *     summary: Delete a specific event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -359,6 +375,6 @@ eventRoutes.put("/:id", updateEvent);
  *       500:
  *         description: Failed to delete event
  */
-eventRoutes.delete("/:id", deleteEvent);
+eventRoutes.delete("/:id", auth, deleteEvent);
 
 export default eventRoutes;

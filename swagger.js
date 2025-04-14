@@ -17,6 +17,20 @@ const options = {
         url: `http://localhost:${PORT}/api`,
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT", // Optional, but good to add
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     tags: [
       {
         name: "Auth",
@@ -42,7 +56,6 @@ const options = {
   },
   apis: ["./routes/*.js"],
 };
-
 const swaggerSpec = swaggerJSDoc(options);
 
 export default swaggerSpec;
