@@ -66,7 +66,8 @@ export const updateEvent = asyncHandler(async (req, res) => {
   // console.log("A PUT request is made to update an Event");
 
   const { id } = req.params;
-  const { title, date, start_time, description, type } = req.body;
+  const { title, date, start_time, end_time, description, location, type } =
+    req.body;
 
   if (!req.user || !req.user.id) {
     throw new ErrorResponse("Not authorized - no user data found", 401);
@@ -87,7 +88,9 @@ export const updateEvent = asyncHandler(async (req, res) => {
   if (title) event.title = title;
   if (date) event.date = date;
   if (start_time) event.start_time = start_time;
+  if (end_time) event.end_time = end_time;
   if (description) event.description = description;
+  if (location) event.location = location;
   if (type) event.type = type;
 
   await event.save();
