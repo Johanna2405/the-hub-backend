@@ -1,32 +1,36 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import logger from "../utils/logger.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
 import models from "../models/index.js";
 const { Event, User } = models;
 
-// GET /events: Fetch all events
-export const getEvents = async (req, res) => {
-  console.info("A GET request is made to get all the Events", req.user);
-  console.log("User ID:", req.user.id);
-  const user = await User.findByPk(req.user.id);
+export const getEvents = asyncHandler(async (req, res) => {
+  // console.log("A GET request is made to get all the Events");
 
+  if (!req.user || !req.user.id) {
+    throw new ErrorResponse("Not authorized - no user data found", 401);
+  }
+
+  const user = await User.findByPk(req.user.id);
   if (!user) {
     throw new ErrorResponse("User not found", 404);
   }
 
   const events = await Event.findAll({ where: { user_id: user.id } });
   res.status(200).json(events);
-};
+});
 
-// POST /events: Create a new event
 export const createEvent = asyncHandler(async (req, res) => {
-  logger.info("A POST request is made to add a new Event");
-  const { title, date, start_time, description, type, user_id } = req.body;
+  // console.log("A POST request is made to add a new Event");
 
-  if (!title || !date || !start_time || !description || !type || !user_id) {
+  if (!req.user || !req.user.id) {
+    throw new ErrorResponse("Not authorized - no user data found", 401);
+  }
+
+  const { title, date, start_time, description, type } = req.body;
+
+  if (!title || !date || !start_time || !description || !type) {
     return res.status(400).json({
-      message:
-        "Title, date, start_time, description, type and user_id are Required",
+      message: "Title, date, start_time, description, and type are required",
     });
   }
 
@@ -36,35 +40,33 @@ export const createEvent = asyncHandler(async (req, res) => {
     start_time,
     description,
     type,
-    user_id,
+    user_id: req.user.id,
   });
+
   return res.status(201).json(event);
 });
 
-// GET /events/:id: Fetch a specific event by ID
 export const getEventById = asyncHandler(async (req, res) => {
-  logger.info("A GET request is made to get a SINGLE Scorecard with an ID");
+  // console.log("A GET request is made to get a SINGLE Event by ID");
+
   const { id } = req.params;
   const event = await Event.findByPk(id);
 
   if (!event) {
     return res.status(404).json({ message: "Event not found." });
   }
-  res.status(200).json(event); // Return the event details
+
+  res.status(200).json(event);
 });
 
-// PUT /events/:id: Update event details for a specific event
 export const updateEvent = asyncHandler(async (req, res) => {
-  logger.warn("A PUT request is made to UPDATE a specific Event");
-  const { id } = req.params;
-  const { title, date, start_time, description, type, user_id } = req.body;
+  // console.log("A PUT request is made to update an Event");
 
-  // Validation: Ensure at least one field is provided for update
-  if (!title && !date && !start_time && !description && !type && !user_id) {
-    return res.status(400).json({
-      message:
-        "Title or date or start_time or description or type or user_id must be provided for Update.",
-    });
+  const { id } = req.params;
+  const { title, date, start_time, description, type } = req.body;
+
+  if (!req.user || !req.user.id) {
+    throw new ErrorResponse("Not authorized - no user data found", 401);
   }
 
   const event = await Event.findByPk(id);
@@ -73,31 +75,43 @@ export const updateEvent = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "Event not found." });
   }
 
-  // Update the event details
+  if (event.user_id !== req.user.id) {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Cannot edit this event" });
+  }
+
   if (title) event.title = title;
   if (date) event.date = date;
   if (start_time) event.start_time = start_time;
   if (description) event.description = description;
   if (type) event.type = type;
-  if (user_id) event.user_id = user_id;
 
-  await event.save(); // Save the updated event
-  res.status(200).json(event); // Respond with the updated event
+  await event.save();
+  res.status(200).json(event);
 });
 
-// DELETE /events/:id: Delete a specific event by ID
 export const deleteEvent = asyncHandler(async (req, res) => {
-  logger.error("A DELETE request is made to DELETE a specific Event");
+  // console.log("A DELETE request is made to delete an Event");
+
   const { id } = req.params;
 
-  if (!id) {
-    throw new ErrorResponse("Event ID is required in the URL", 400);
+  if (!req.user || !req.user.id) {
+    throw new ErrorResponse("Not authorized - no user data found", 401);
   }
+
   const event = await Event.findByPk(id);
 
   if (!event) {
     throw new ErrorResponse(`Event with id ${id} not found`, 404);
   }
-  await event.destroy(); // Delete the event from the database
+
+  if (event.user_id !== req.user.id) {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Cannot delete this event" });
+  }
+
+  await event.destroy();
   res.status(200).json({ message: "Event deleted successfully." });
 });

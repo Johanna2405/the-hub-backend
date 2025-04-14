@@ -15,6 +15,8 @@ const eventRoutes = express.Router();
  *   get:
  *     summary: Get all events
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of all events
@@ -74,6 +76,8 @@ eventRoutes.get("/", auth, getEvents);
  *   get:
  *     summary: Get a specific event by ID
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -140,6 +144,8 @@ eventRoutes.get("/:id", auth, getEventById);
  *   post:
  *     summary: Create a new event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -240,6 +246,8 @@ eventRoutes.post("/", auth, createEvent);
  *   put:
  *     summary: Update an existing event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -342,6 +350,8 @@ eventRoutes.put("/:id", auth, updateEvent);
  *   delete:
  *     summary: Delete a specific event
  *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
