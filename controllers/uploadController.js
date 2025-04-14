@@ -2,9 +2,9 @@ import models from "../models/index.js";
 const { User } = models;
 
 export const handleUploadProfile = async (req, res) => {
-  console.log("Upload route hit");
-  console.log("File received:", req.file);
-  console.log("Body:", req.body);
+  //   console.log("Upload route hit");
+  //   console.log("File received:", req.file);
+  //   console.log("Body:", req.body);
 
   const imageUrl = req.file?.path;
   const userId = req.user?.id || req.body.user_id;
@@ -30,6 +30,7 @@ export const handleUploadProfile = async (req, res) => {
     res.json({ success: true, imageUrl });
   } catch (error) {
     console.error("Upload error:", error);
+
     res.status(500).json({
       success: false,
       message: "Upload failed",
