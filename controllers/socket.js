@@ -4,6 +4,7 @@ const { Message } = models;
 
 export default function setupSocket(io) {
   const onlineUsers = {};
+  const lastSeen = {};
 
   io.on("connection", (socket) => {
     //console.log(`User connected: ${socket.id}`);
@@ -16,7 +17,12 @@ export default function setupSocket(io) {
       onlineUsers[user.id].add(socket.id);
       //console.log("Online users:", Object.keys(onlineUsers)); //comment logs
 
-      io.emit("update_online_users", Object.keys(onlineUsers));
+      delete lastSeen[user.id];
+
+      io.emit("update_online_users", {
+        userIds: Object.keys(onlineUsers),
+        lastSeen: lastSeen,
+      });
     });
 
     socket.on("send_message", async (data) => {
@@ -48,10 +54,14 @@ export default function setupSocket(io) {
         socketSet.delete(socket.id);
         if (socketSet.size === 0) {
           delete onlineUsers[userId];
+          lastSeen[userId] = new Date();
         }
       }
 
-      io.emit("update_online_users", Object.keys(onlineUsers));
+      io.emit("update_online_users", {
+        userIds: Object.keys(onlineUsers),
+        lastSeen: lastSeen,
+      });
     });
   });
 }
