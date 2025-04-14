@@ -6,11 +6,15 @@ export default function setupSocket(io) {
   const onlineUsers = {};
 
   io.on("connection", (socket) => {
-    // console.log(`User connected: ${socket.id}`);
+    //console.log(`User connected: ${socket.id}`);
 
     socket.on("user_connected", (user) => {
-      onlineUsers[user.id] = socket.id;
-      // console.log("Online users:", Object.keys(onlineUsers)); //comment logs
+      if (!onlineUsers[user.id]) {
+        onlineUsers[user.id] = new Set();
+      }
+
+      onlineUsers[user.id].add(socket.id);
+      //console.log("Online users:", Object.keys(onlineUsers)); //comment logs
 
       io.emit("update_online_users", Object.keys(onlineUsers));
     });
@@ -40,12 +44,11 @@ export default function setupSocket(io) {
 
     socket.on("disconnect", () => {
       // console.log(`User disconnected: ${socket.id}`);  //comment logs
-
-      const disconnectedUserId = Object.keys(onlineUsers).find(
-        (id) => onlineUsers[id] === socket.id
-      );
-      if (disconnectedUserId) {
-        delete onlineUsers[disconnectedUserId];
+      for (const [userId, socketSet] of Object.entries(onlineUsers)) {
+        socketSet.delete(socket.id);
+        if (socketSet.size === 0) {
+          delete onlineUsers[userId];
+        }
       }
 
       io.emit("update_online_users", Object.keys(onlineUsers));
