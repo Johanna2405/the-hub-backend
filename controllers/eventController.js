@@ -1,14 +1,22 @@
-import Event from "../models/Event.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import logger from "../utils/logger.js";
 import ErrorResponse from "../utils/ErrorResponse.js";
+import models from "../models/index.js";
+const { Event, User } = models;
 
 // GET /events: Fetch all events
-export const getEvents = asyncHandler(async (req, res) => {
-  logger.info("A GET request is made to get all the Events");
-  const events = await Event.findAll({ where: { user_id: req.user.id } });
-  res.status(200).json(events); // Return all users
-});
+export const getEvents = async (req, res) => {
+  console.info("A GET request is made to get all the Events", req.user);
+  console.log("User ID:", req.user.id);
+  const user = await User.findByPk(req.user.id);
+
+  if (!user) {
+    throw new ErrorResponse("User not found", 404);
+  }
+
+  const events = await Event.findAll({ where: { user_id: user.id } });
+  res.status(200).json(events);
+};
 
 // POST /events: Create a new event
 export const createEvent = asyncHandler(async (req, res) => {
@@ -53,12 +61,10 @@ export const updateEvent = asyncHandler(async (req, res) => {
 
   // Validation: Ensure at least one field is provided for update
   if (!title && !date && !start_time && !description && !type && !user_id) {
-    return res
-      .status(400)
-      .json({
-        message:
-          "Title or date or start_time or description or type or user_id must be provided for Update.",
-      });
+    return res.status(400).json({
+      message:
+        "Title or date or start_time or description or type or user_id must be provided for Update.",
+    });
   }
 
   const event = await Event.findByPk(id);
