@@ -29,6 +29,7 @@ export const getListsPerUserId = async (req, res) => {
   try {
     const lists = await List.findAll({
       where: { user_id, privacy: "Private" },
+      order: [["createdAt", "DESC"]],
       include: [
         {
           model: User,
@@ -39,7 +40,7 @@ export const getListsPerUserId = async (req, res) => {
         },
       ],
     });
-
+    console.log("lists", lists);
     res.status(200).json(lists);
   } catch (error) {
     console.error("Error fetching lists:", error);
