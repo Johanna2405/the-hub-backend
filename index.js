@@ -24,6 +24,7 @@ import communityPostRoutes from "./routes/communityPostRoutes.js";
 import communityListRoutes from "./routes/communityListRoutes.js";
 import communityListItemRoutes from "./routes/communityListItemRoutes.js";
 import communityMessageRoutes from "./routes/communityMessageRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/communities", communityRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Community specific routes
 app.use("/api/communities/:communityId/events", communityEventRoutes);
