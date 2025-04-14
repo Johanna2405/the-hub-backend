@@ -31,9 +31,11 @@ export const getCommunityLists = asyncHandler(async (req, res) => {
 
   const lists = await List.findAll({
     where: { community_id: communityId },
+    order: [["createdAt", "DESC"]],
     include: [{ model: ListItem }],
   });
 
+  console.log("lists", lists);
   res.status(200).json(lists);
 });
 
