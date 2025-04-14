@@ -26,7 +26,8 @@ export const createEvent = asyncHandler(async (req, res) => {
     throw new ErrorResponse("Not authorized - no user data found", 401);
   }
 
-  const { title, date, start_time, description, type } = req.body;
+  const { title, date, start_time, end_time, description, location, type } =
+    req.body;
 
   if (!title || !date || !start_time || !description || !type) {
     return res.status(400).json({
@@ -38,7 +39,9 @@ export const createEvent = asyncHandler(async (req, res) => {
     title,
     date,
     start_time,
+    end_time,
     description,
+    location,
     type,
     user_id: req.user.id,
   });
