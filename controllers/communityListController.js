@@ -35,7 +35,6 @@ export const getCommunityLists = asyncHandler(async (req, res) => {
     include: [{ model: ListItem }],
   });
 
-  console.log("lists", lists);
   res.status(200).json(lists);
 });
 

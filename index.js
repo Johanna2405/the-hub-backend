@@ -72,6 +72,8 @@ const server = http.createServer(app);
 
 // Attach Socket.IO
 const io = new Server(server, {
+  pingTimeout: 5000,
+  pingInterval: 2000,
   cors: {
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],

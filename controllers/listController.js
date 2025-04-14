@@ -40,7 +40,6 @@ export const getListsPerUserId = async (req, res) => {
         },
       ],
     });
-    console.log("lists", lists);
     res.status(200).json(lists);
   } catch (error) {
     console.error("Error fetching lists:", error);

@@ -4,15 +4,25 @@ const { Message } = models;
 
 export default function setupSocket(io) {
   const onlineUsers = {};
+  const lastSeen = {};
 
   io.on("connection", (socket) => {
-    // console.log(`User connected: ${socket.id}`);
+    //console.log(`User connected: ${socket.id}`);
 
     socket.on("user_connected", (user) => {
-      onlineUsers[user.id] = socket.id;
-      // console.log("Online users:", Object.keys(onlineUsers)); //comment logs
+      if (!onlineUsers[user.id]) {
+        onlineUsers[user.id] = new Set();
+      }
 
-      io.emit("update_online_users", Object.keys(onlineUsers));
+      onlineUsers[user.id].add(socket.id);
+      //console.log("Online users:", Object.keys(onlineUsers)); //comment logs
+
+      delete lastSeen[user.id];
+
+      io.emit("update_online_users", {
+        userIds: Object.keys(onlineUsers),
+        lastSeen: lastSeen,
+      });
     });
 
     socket.on("send_message", async (data) => {
@@ -40,15 +50,18 @@ export default function setupSocket(io) {
 
     socket.on("disconnect", () => {
       // console.log(`User disconnected: ${socket.id}`);  //comment logs
-
-      const disconnectedUserId = Object.keys(onlineUsers).find(
-        (id) => onlineUsers[id] === socket.id
-      );
-      if (disconnectedUserId) {
-        delete onlineUsers[disconnectedUserId];
+      for (const [userId, socketSet] of Object.entries(onlineUsers)) {
+        socketSet.delete(socket.id);
+        if (socketSet.size === 0) {
+          delete onlineUsers[userId];
+          lastSeen[userId] = new Date();
+        }
       }
 
-      io.emit("update_online_users", Object.keys(onlineUsers));
+      io.emit("update_online_users", {
+        userIds: Object.keys(onlineUsers),
+        lastSeen: lastSeen,
+      });
     });
   });
 }
