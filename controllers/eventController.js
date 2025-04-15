@@ -15,7 +15,12 @@ export const getEvents = asyncHandler(async (req, res) => {
     throw new ErrorResponse("User not found", 404);
   }
 
-  const events = await Event.findAll({ where: { user_id: user.id } });
+  const events = await Event.findAll({
+    where: {
+      user_id: req.user.id,
+      type: "Private",
+    },
+  });
   res.status(200).json(events);
 });
 
@@ -26,8 +31,16 @@ export const createEvent = asyncHandler(async (req, res) => {
     throw new ErrorResponse("Not authorized - no user data found", 401);
   }
 
-  const { title, date, start_time, end_time, description, location, type } =
-    req.body;
+  const {
+    title,
+    date,
+    start_time,
+    end_time,
+    description,
+    location,
+    type,
+    community_id,
+  } = req.body;
 
   if (!title || !date || !start_time || !description || !type) {
     return res.status(400).json({
@@ -43,6 +56,7 @@ export const createEvent = asyncHandler(async (req, res) => {
     description,
     location,
     type,
+    community_id,
     user_id: req.user.id,
   });
 
