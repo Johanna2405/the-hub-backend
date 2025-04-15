@@ -15,7 +15,12 @@ export const getEvents = asyncHandler(async (req, res) => {
     throw new ErrorResponse("User not found", 404);
   }
 
-  const events = await Event.findAll({ where: { user_id: user.id } });
+  const events = await Event.findAll({
+    where: {
+      user_id: req.user.id,
+      type: "Private",
+    },
+  });
   res.status(200).json(events);
 });
 
